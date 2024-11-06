@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1025397129767",
+    "project_id": "social-compose",
+    "storage_bucket": "social-compose.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1025397129767:android:30e8e0ad1ea1c072368402",
+        "android_client_info": {
+          "package_name": "com.example.socialcomposeapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBl-LxYRHfVx2s7AJ0b91cepuSnrZugreg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
