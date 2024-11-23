@@ -2,8 +2,6 @@ package com.example.socialcomposeapp.screens.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.socialcomposeapp.screens.signup.SignUpEvent
-import com.example.socialcomposeapp.screens.signup.SignUpNavigationEvent
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -2,19 +2,14 @@ package com.example.socialcomposeapp.screens.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.Chat
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.PersonOutline
-import androidx.compose.material3.BottomAppBar
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,19 +19,22 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.socialcomposeapp.data.model.Post
 import com.example.socialcomposeapp.navigation.DestinationScreen
+import com.example.socialcomposeapp.screens.components.CustomBottomNavigationBar
+import com.example.socialcomposeapp.screens.home.components.PostCard
+import com.example.socialcomposeapp.screens.home.components.StoryRow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    modifier: Modifier = Modifier,
-//    navigate: (DestinationScreen) -> Unit
+    navigate: (DestinationScreen) -> Unit,
+    posts: List<Post>
 ) {
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
         topBar = {
             TopAppBar(
@@ -50,6 +48,7 @@ fun HomeScreen(
                             .fillMaxSize()
                     )
                 },
+                scrollBehavior = scrollBehavior,
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color(color = 0xff692663),
                     titleContentColor = Color(color = 0xffFDF5FE),
@@ -57,57 +56,55 @@ fun HomeScreen(
                     navigationIconContentColor = Color(color = 0xffFDF5FE),
                     scrolledContainerColor = Color(color = 0xff440E3F)
                 ),
-                modifier = Modifier.height(80.dp)
-            )
-        },
-
-        bottomBar = {
-            BottomAppBar(
-                actions = {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween, // Ensures even spacing between icons
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        IconButton(onClick = {}) {
-                            Icon(
-                                imageVector = Icons.Outlined.Home,
-                                contentDescription = "Home"
-                            )
-                        }
-                        IconButton(onClick = {}) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Outlined.Chat,
-                                contentDescription = "Home"
-                            )
-                        }
-                        IconButton(onClick = {}) {
-                            Icon(
-                                imageVector = Icons.Outlined.PersonOutline,
-                                contentDescription = "Home"
-                            )
-                        }
+                actions = { // Add the actions parameter
+                    IconButton(onClick = { /* Handle notification click */ }) {
+                        Icon(
+                            imageVector = Icons.Default.Notifications, // Use the notification icon
+                            contentDescription = "Notifications"
+                        )
                     }
                 },
-                containerColor = Color(color = 0xff692663),
-                contentColor = Color(color = 0xfffdf5fe).copy(alpha = 0.5f),
                 modifier = Modifier.height(80.dp)
             )
         }
     ) {
-        Column(
-            modifier
-                .fillMaxSize()
-                .padding(it)
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
                 .background(Color(color = 0xff440E3F))
+                .padding(it),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-
+            item {
+                StoryRow()
+            }
+            items(posts) { post ->
+                PostCard(
+                    username = post.username,
+                    timeAgo = post.timeAgo,
+                    postText = post.postText
+                )
+            }
         }
+        CustomBottomNavigationBar(
+            onMessageClick = {
+                navigate(
+                    DestinationScreen.MessageScreenObj
+                )
+            },
+            onProfileClick = {
+                navigate(
+                    DestinationScreen.ProfileScreenObj
+                )
+            },
+            onSearchClick = {
+                navigate(
+                    DestinationScreen.SearchScreenObj
+                )
+            }
+        )
     }
 }
 
-@Preview
-@Composable
-private fun s() {
-    HomeScreen()
-}
+
+

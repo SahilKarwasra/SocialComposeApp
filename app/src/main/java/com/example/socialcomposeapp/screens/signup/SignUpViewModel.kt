@@ -3,13 +3,17 @@ package com.example.socialcomposeapp.screens.signup
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class SignUpViewModel: ViewModel() {
+class SignUpViewModel : ViewModel() {
+    private val auth = FirebaseAuth.getInstance()
+    private val firestore = FirebaseFirestore.getInstance()
+
     private val _navigationState = MutableSharedFlow<SignUpNavigationEvent>()
     val navigationState = _navigationState.asSharedFlow()
 
@@ -34,52 +38,68 @@ class SignUpViewModel: ViewModel() {
                 name.value.isNotEmpty()
     }
 
-    fun onEmailChange(email: String){
+    fun onEmailChange(email: String) {
         _email.value = email
         validate()
     }
 
-    fun onPasswordChange(password: String){
+    fun onPasswordChange(password: String) {
         _password.value = password
         validate()
     }
 
-    fun onNameChange(name: String){
+    fun onNameChange(name: String) {
         _name.value = name
         validate()
     }
 
-    fun signUp(){
+    fun signUp() {
         uiEvent.value = SignUpEvent.Loading
         val auth = FirebaseAuth.getInstance()
         auth.createUserWithEmailAndPassword(email.value, password.value)
             .addOnCompleteListener { result ->
-            if (result.isSuccessful){
-                uiEvent.value = SignUpEvent.Success
-                viewModelScope.launch {
-                    _navigationState.emit(SignUpNavigationEvent.NavigateToHome)
-                }
-            }else{
-                uiEvent.value = SignUpEvent.Error(result.exception?.message ?: "Unknown error")
-            }
-        }
-    }
+                if (result.isSuccessful) {
+                    val userId = auth.currentUser?.uid
+                    if (userId != null) {
+                        val user = mapOf(
+                            "userId" to userId,
+                            "name" to name.value,
+                            "email" to email.value
+                        )
 
-    fun onLoginButtonClicked(){
+                        firestore.collection("users").document(userId).set(user)
+                            .addOnSuccessListener {
+                                uiEvent.value = SignUpEvent.Success
+                                viewModelScope.launch {
+                                    _navigationState.emit(SignUpNavigationEvent.NavigateToHome)
+                                }
+                            }
+                            .addOnFailureListener { exception ->
+                                uiEvent.value = SignUpEvent.Error(exception.message ?: "Error storing data")
+                            }
+                    } else {
+                        uiEvent.value = SignUpEvent.Error("User ID not found")
+                    }
+                } else {
+                    uiEvent.value = SignUpEvent.Error(result.exception?.message ?: "Unknown error")
+                }
+            }
+    }
+    fun onLoginButtonClicked() {
         viewModelScope.launch {
             _navigationState.emit(SignUpNavigationEvent.NavigateToLogin)
         }
     }
 }
 
-sealed class SignUpNavigationEvent{
-    object NavigateToLogin: SignUpNavigationEvent()
-    object NavigateToHome: SignUpNavigationEvent()
+sealed class SignUpNavigationEvent {
+    object NavigateToLogin : SignUpNavigationEvent()
+    object NavigateToHome : SignUpNavigationEvent()
 }
 
-sealed class SignUpEvent{
-    object Normal: SignUpEvent()
-    object Loading: SignUpEvent()
-    data class Error(val message: String): SignUpEvent()
-    object Success: SignUpEvent()
+sealed class SignUpEvent {
+    object Normal : SignUpEvent()
+    object Loading : SignUpEvent()
+    data class Error(val message: String) : SignUpEvent()
+    object Success : SignUpEvent()
 }
