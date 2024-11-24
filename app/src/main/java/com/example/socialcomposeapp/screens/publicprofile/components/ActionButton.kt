@@ -13,7 +13,7 @@ import androidx.compose.ui.graphics.Color
 @Composable
 fun ActionButtons(
     onClick: () -> Unit,
-    isFollowing: Boolean,
+    isFollowing: () ->  Boolean,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -23,7 +23,7 @@ fun ActionButtons(
             onClick = onClick,
             colors = ButtonDefaults.buttonColors(containerColor = Color(color = 0xff692663))
         ) {
-            Text(text = if (isFollowing) "Unfollow" else "Follow", color = Color.White)
+            Text(text = if (isFollowing()) "Unfollow" else "Follow", color = Color.White)
         }
         Button(
             onClick = { /* Message Action */ },

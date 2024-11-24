@@ -16,8 +16,8 @@ import androidx.compose.ui.graphics.Color
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GreetingMessage(
-    onBackClick: () -> Unit = {},
-    username: String = ""
+    username: String = "",
+    onBackClick: () -> Unit = {}
 ) {
     TopAppBar(
         title = {

@@ -8,7 +8,7 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
 
     // Adding User
     fun addUser(user: UserModel, onComplete: (Boolean) -> Unit) {
-        userRepository.addUserToFirestore(user) { success ->
+        userRepository.addUserToFireStore(user) { success ->
             onComplete(success)
         }
     }

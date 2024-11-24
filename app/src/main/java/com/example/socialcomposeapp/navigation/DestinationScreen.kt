@@ -23,3 +23,19 @@ sealed class DestinationScreen {
 
 }
 
+sealed class SubGraph {
+    @Serializable
+    data object Auth : SubGraph()
+    @Serializable
+    data object Home : SubGraph()
+
+    @Serializable
+    data object Message : SubGraph()
+
+    @Serializable
+    data object Search : SubGraph()
+
+    @Serializable
+    data object Profile : SubGraph()
+}
+

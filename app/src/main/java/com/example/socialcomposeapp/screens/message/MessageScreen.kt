@@ -14,11 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.socialcomposeapp.R
-import com.example.socialcomposeapp.data.model.Message
-import com.example.socialcomposeapp.data.model.Profile
 import com.example.socialcomposeapp.navigation.DestinationScreen
-import com.example.socialcomposeapp.screens.components.CustomBottomNavigationBar
 import com.example.socialcomposeapp.screens.message.component.GreetingMessage
 import com.example.socialcomposeapp.screens.message.component.MessageList
 import com.example.socialcomposeapp.screens.message.component.ProfileRow
@@ -70,20 +66,6 @@ fun MessageScreen(
         }
 
     }
-    CustomBottomNavigationBar(
-        onHomeClick = {
-            navigate(DestinationScreen.HomeScreenObj)
-        },
-        onProfileClick = {
-            navigate(
-                DestinationScreen.ProfileScreenObj
-            )
-        },
-        onSearchClick = {
-            navigate(
-                DestinationScreen.SearchScreenObj
-            )
-        }
-    )
+
 }
 
