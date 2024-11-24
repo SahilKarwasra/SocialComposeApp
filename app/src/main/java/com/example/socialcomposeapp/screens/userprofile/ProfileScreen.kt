@@ -12,7 +12,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.socialcomposeapp.navigation.DestinationScreen
-import com.example.socialcomposeapp.screens.components.CustomBottomNavigationBar
 import com.example.socialcomposeapp.screens.userprofile.components.ActionButtons
 import com.example.socialcomposeapp.screens.userprofile.components.BioSection
 import com.example.socialcomposeapp.screens.userprofile.components.GreetingMessage
@@ -62,23 +61,7 @@ fun ProfileScreen(
         Spacer(modifier = Modifier.height(24.dp))
         PostsSection()
     }
-    CustomBottomNavigationBar(
-        onMessageClick = {
-            navigate(
-                DestinationScreen.MessageScreenObj
-            )
-        },
-        onHomeClick = {
-            navigate(
-                DestinationScreen.HomeScreenObj
-            )
-        },
-        onSearchClick = {
-            navigate(
-                DestinationScreen.SearchScreenObj
-            )
-        }
-    )
+
 }
 
 

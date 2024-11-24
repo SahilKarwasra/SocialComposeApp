@@ -25,7 +25,7 @@ class ProfileScreenViewModel(
 
     private fun loadUserData() {
         viewModelScope.launch {
-            userRepository.getCurrentUserFromFirestore { user, success ->
+            userRepository.getCurrentUserFromFireStore { user, success ->
                 if (success && user != null) {
                     _user.value = user
                 } else {

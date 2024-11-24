@@ -33,7 +33,7 @@ class EditProfileViewModel(
 
     private fun loadUserData() {
         viewModelScope.launch {
-            userRepository.getCurrentUserFromFirestore { user, success ->
+            userRepository.getCurrentUserFromFireStore { user, success ->
                 if (success && user != null) {
                     _name.value = TextFieldValue(user.displayName ?: "")
                     _email.value = TextFieldValue(user.email ?: "")
@@ -64,7 +64,7 @@ class EditProfileViewModel(
                 bio = _bio.value.text,
                 userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
             )
-            userRepository.addUserToFirestore(updatedUser) { success ->
+            userRepository.addUserToFireStore(updatedUser) { success ->
                 // Handle success or failure
             }
         }

@@ -1,12 +1,21 @@
 package com.example.socialcomposeapp.navigation
 
 import EditProfileScreen
+import android.annotation.SuppressLint
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navigation
 import com.example.socialcomposeapp.data.model.Post
+import com.example.socialcomposeapp.screens.components.CustomBottomNavigationBar
 import com.example.socialcomposeapp.screens.userprofile.ProfileScreen
 import com.example.socialcomposeapp.screens.login.LoginScreen
 import com.example.socialcomposeapp.screens.home.HomeScreen
@@ -17,113 +26,133 @@ import com.example.socialcomposeapp.screens.signup.SignUpScreen
 import com.google.firebase.auth.FirebaseAuth
 
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AppNavigation(
     modifier: Modifier = Modifier
 ) {
     val navController = rememberNavController()
+
     val startDestination = if (FirebaseAuth.getInstance().currentUser != null) {
         DestinationScreen.HomeScreenObj
     } else {
         DestinationScreen.LoginScreenObj
     }
-    NavHost(
-        navController = navController,
-        startDestination = startDestination
-    ) {
-        composable<DestinationScreen.LoginScreenObj> {
-            LoginScreen(
-                navigate = { destination ->
-                    when (destination) {
-                        DestinationScreen.HomeScreenObj -> {
-                            navController.navigate(DestinationScreen.HomeScreenObj) {
-                                popUpTo(DestinationScreen.LoginScreenObj) {
-                                    inclusive = true
+    Scaffold(
+        bottomBar = {
+            CustomBottomNavigationBar(
+                navController = navController
+            )
+        }
+    ) { _ ->
+        NavHost(
+            navController = navController,
+            startDestination = startDestination
+        ) {
+
+            composable<DestinationScreen.LoginScreenObj> {
+                LoginScreen(
+                    navigate = { destination ->
+                        when (destination) {
+                            DestinationScreen.HomeScreenObj -> {
+                                navController.navigate(DestinationScreen.HomeScreenObj) {
+                                    popUpTo(DestinationScreen.LoginScreenObj) {
+                                        inclusive = true
+                                    }
                                 }
                             }
-                        }
 
-                        else -> {
-                            navController.navigate(destination)
+                            else -> {
+                                navController.navigate(destination)
+                            }
                         }
                     }
-                }
 
-            )
+                )
 
-        }
-        composable<DestinationScreen.SignUpScreenObj> {
-            SignUpScreen(
-                navigate = { destination ->
-                    when (destination) {
-                        DestinationScreen.LoginScreenObj -> {
-                            navController.navigate(DestinationScreen.LoginScreenObj) {
-                                popUpTo(DestinationScreen.SignUpScreenObj) {
-                                    inclusive = true
+            }
+
+            composable<DestinationScreen.SignUpScreenObj> {
+                SignUpScreen(
+                    navigate = { destination ->
+                        when (destination) {
+                            DestinationScreen.LoginScreenObj -> {
+                                navController.navigate(DestinationScreen.LoginScreenObj) {
+                                    popUpTo(DestinationScreen.SignUpScreenObj) {
+                                        inclusive = true
+                                    }
                                 }
                             }
-                        }
 
-                        DestinationScreen.HomeScreenObj -> {
-                            navController.navigate(DestinationScreen.HomeScreenObj) {
-                                popUpTo(DestinationScreen.SignUpScreenObj) {
-                                    inclusive = true
+                            DestinationScreen.HomeScreenObj -> {
+                                navController.navigate(DestinationScreen.HomeScreenObj) {
+                                    popUpTo(DestinationScreen.SignUpScreenObj) {
+                                        inclusive = true
+                                    }
                                 }
                             }
-                        }
 
-                        else -> {
-                            navController.navigate(destination)
-                        }
+                            else -> {
+                                navController.navigate(destination)
+                            }
 
+                        }
                     }
-                }
 
-            )
-        }
-        composable<DestinationScreen.HomeScreenObj> {
-            HomeScreen(
-                posts = samplePosts,
-                navigate = {
-                    navController.navigate(it)
-                }
-            )
-        }
-        composable<DestinationScreen.MessageScreenObj> {
-            MessageScreen(
-                navigate = {
-                    navController.navigate(it)
-                }
-            )
-        }
-        composable<DestinationScreen.ProfileScreenObj> {
-            ProfileScreen(
-                navigate = {
-                    navController.navigate(it)
-                }
-            )
-        }
-        composable<DestinationScreen.EditProfileScreenObj> {
-            EditProfileScreen(
-                navigate = {
-                    navController.navigate(it)
-                },
-                navigateBack = {
-                    navController.popBackStack()
-                }
-            )
-        }
-        composable<DestinationScreen.PublicProfileScreenObj> { backStackEntry ->
-            val userId = (backStackEntry.arguments?.get("userId") as? String) ?: ""
-            PublicProfilesScreen(
-                navigate = { destination -> navController.navigate(destination) },
-                userId = userId
-            )
-        }
-        composable<DestinationScreen.SearchScreenObj> {
-            SearchScreen(
-                navigate = { destination -> navController.navigate(destination) }
-            )
+                )
+            }
+
+            composable<DestinationScreen.HomeScreenObj> {
+                HomeScreen(
+                    posts = samplePosts,
+                    navigate = {
+                        navController.navigate(it)
+                    }
+                )
+            }
+
+
+            composable<DestinationScreen.MessageScreenObj> {
+                MessageScreen(
+                    navigate = {
+                        navController.navigate(it)
+                    }
+                )
+            }
+
+            composable<DestinationScreen.ProfileScreenObj> {
+                ProfileScreen(
+                    navigate = {
+                        navController.navigate(it)
+                    }
+                )
+            }
+
+            composable<DestinationScreen.EditProfileScreenObj> {
+                EditProfileScreen(
+                    navigate = {
+                        navController.navigate(it)
+                    },
+                    navigateBack = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+
+            composable<DestinationScreen.PublicProfileScreenObj> { backStackEntry ->
+                val userId by remember{ mutableStateOf((backStackEntry.arguments?.get("userId") as? String) ?: "") }
+                PublicProfilesScreen(
+                    navigate = remember{ { destination -> navController.navigate(destination) } },
+                    userId = userId,
+                    onBackPress = navController::navigateUp
+                )
+            }
+
+            composable<DestinationScreen.SearchScreenObj> {
+                SearchScreen(
+                    navigate = { destination -> navController.navigate(destination) }
+                )
+            }
         }
     }
 }

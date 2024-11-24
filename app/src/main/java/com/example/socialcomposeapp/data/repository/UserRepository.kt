@@ -8,8 +8,9 @@ import kotlinx.coroutines.tasks.await
 
 class UserRepository {
     private val db = FirebaseFirestore.getInstance()
+    private val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
-    fun addUserToFirestore(user: UserModel, onComplete: (Boolean) -> Unit) {
+    fun addUserToFireStore(user: UserModel, onComplete: (Boolean) -> Unit) {
         db.collection("users")
             .document(user.userId)
             .set(user)
@@ -21,7 +22,7 @@ class UserRepository {
             }
     }
 
-    fun getCurrentUserFromFirestore(onComplete: (UserModel?, Boolean) -> Unit) {
+    fun getCurrentUserFromFireStore(onComplete: (UserModel?, Boolean) -> Unit) {
         val currentUser = FirebaseAuth.getInstance().currentUser
         val userId = currentUser?.uid
 
@@ -49,6 +50,7 @@ class UserRepository {
     }
 
     suspend fun searchUsers(query: String): List<UserModel> {
+
         return try {
             val result = db.collection("users")
                 .orderBy("displayName")
@@ -57,7 +59,9 @@ class UserRepository {
                 .get()
                 .await()
 
-            result.documents.mapNotNull { it.toObject(UserModel::class.java) }
+            result.documents.mapNotNull {
+                it.toObject(UserModel::class.java)
+            }.filter { user -> user.userId != currentUserId }
         } catch (e: Exception) {
             emptyList()
         }
